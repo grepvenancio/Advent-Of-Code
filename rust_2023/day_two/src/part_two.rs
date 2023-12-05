@@ -5,22 +5,31 @@ fn main() {
 }
 
 fn parse_game(game: &str) -> i32 {
-    let before_after_id: Vec<&str> = game.split(":").collect();
     let mut mim_green = 0;
     let mut mim_blue = 0;
     let mut mim_red = 0;
-    let rounds: Vec<&str> = before_after_id.last().unwrap().split(";").collect();
-    for round in rounds {
-        let n_cubes: Vec<&str> = round.split(",").collect();
-        for play in n_cubes {
-            let number_cube_color: Vec<&str> = play.split_whitespace().collect();
-            let number = number_cube_color.first().unwrap().parse::<i32>().unwrap();
-            let cube = number_cube_color.last().unwrap();
-            match *cube {
-                "green" => if number > mim_green { mim_green = number},
-                "blue" => if number > mim_blue { mim_blue = number },
-                "red" => if number > mim_red { mim_red = number },
-                _ => {}
+    for round in game.split(":").last().unwrap().split(";") {
+        for play in round.split(",").map(|play| play.trim()) {
+            let whitespace_after_num = play.find(" ").unwrap();
+            let number = play[..whitespace_after_num].parse::<i32>().unwrap();
+            let cube = &play[(whitespace_after_num + 1)..];
+            match cube {
+                "green" => {
+                    if number > mim_green {
+                        mim_green = number
+                    }
+                }
+                "blue" => {
+                    if number > mim_blue {
+                        mim_blue = number
+                    }
+                }
+                "red" => {
+                    if number > mim_red {
+                        mim_red = number
+                    }
+                }
+                _ => unreachable!(),
             }
         }
     }
@@ -31,9 +40,7 @@ fn parse_game(game: &str) -> i32 {
 fn solve_part_two(input: &str) -> String {
     input
         .lines()
-        .map(|line| {
-            parse_game(line)
-        })
+        .map(|line| parse_game(line))
         .sum::<i32>()
         .to_string()
 }

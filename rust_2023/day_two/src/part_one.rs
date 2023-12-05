@@ -5,49 +5,51 @@ fn main() {
 }
 
 fn parse_game(game: &str) -> Option<&str> {
-    let mut flag = true; 
-    let before_after_id: Vec<&str> = game.split(":").collect();
-    let rounds: Vec<&str> = before_after_id.last().unwrap().split(";").collect();
-    for round in rounds {
-        let n_cubes: Vec<&str> = round.split(",").collect();
-        for play in n_cubes {
-            let number_cube_color: Vec<&str> = play.split_whitespace().collect();
-            let number = number_cube_color.first().unwrap().parse::<i32>().unwrap();
-            let cube = number_cube_color.last().unwrap();
-            match *cube {
-                "green" => if number > 13 { flag = false },
-                "blue" => if number > 14 { flag = false },
-                "red" => if number > 12 { flag = false },
-                _ => {}
+    let mut flag = true;
+    for round in game.split(":").last().unwrap().split(";") {
+        for play in round.split(",").map(|play| play.trim()) {
+            let whitespace_after_num = play.find(" ").unwrap();
+            let number = play[..whitespace_after_num].parse::<i32>().unwrap();
+            let cube = &play[(whitespace_after_num + 1)..];
+            match cube {
+                "green" => {
+                    if number > 13 {
+                        flag = false
+                    }
+                }
+                "blue" => {
+                    if number > 14 {
+                        flag = false
+                    }
+                }
+                "red" => {
+                    if number > 12 {
+                        flag = false
+                    }
+                }
+                _ => unreachable!(),
             }
         }
     }
     match flag {
         true => Some(game),
-        false => None
+        false => None,
     }
+}
+
+fn get_id(game: &str) -> i32 {
+    let game_id_gap = game.find(" ").unwrap();
+    let colon = game.find(":").unwrap();
+    game[(game_id_gap + 1)..colon].parse::<i32>().unwrap()
 }
 
 fn solve_part_one(input: &str) -> String {
     input
         .lines()
-        .filter_map(|line| {
-            parse_game(line)
-        })
-        .map(|game| {
-            let before_after_id = game.split(":").collect::<Vec<&str>>();
-            before_after_id
-                .first()
-                .unwrap()
-                .split(" ")
-                .collect::<Vec<&str>>()
-                .last()
-                .unwrap()
-                .parse::<i32>()
-                .unwrap()
-        })
-            .sum::<i32>()
-            .to_string()
+        .filter(|line| parse_game(line).is_some())
+        .map(|game| get_id(game.trim()))
+        .sum::<i32>()
+        .to_string()
 }
 
 #[cfg(test)]
