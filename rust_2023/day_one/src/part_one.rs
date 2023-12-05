@@ -4,7 +4,7 @@ fn main() {
     println!("Result part one: {}", output);
 }
 
-fn solve_part_one(input: &str) -> i32 {
+fn solve_part_one(input: &str) -> String {
     input
         .lines()
         .map(|line| {
@@ -18,7 +18,8 @@ fn solve_part_one(input: &str) -> i32 {
             let str_number = format!("{}{}", first, last);
             str_number.parse::<i32>().unwrap()
         })
-        .sum()
+        .sum::<i32>()
+        .to_string()
 }
 
 #[cfg(test)]
@@ -32,6 +33,6 @@ mod tests {
                      a1b2c3d4e5f
                      treb7uchet";
         let output = solve_part_one(input);
-        assert_eq!(output, 142);
+        assert_eq!(output, "142");
     }
 }

@@ -9,7 +9,7 @@ fn main() {
     println!("Result part one: {}", output);
 }
 
-fn solve_part_two(input: &str) -> i32 {
+fn solve_part_two(input: &str) -> String {
     input
         .lines()
         .map(|line| {
@@ -22,7 +22,8 @@ fn solve_part_two(input: &str) -> i32 {
             let str_number = format!("{}{}", first, last);
             str_number.parse::<i32>().unwrap()
         })
-        .sum()
+        .sum::<i32>()
+        .to_string()
 }
 
 fn parse_str_to_numeric(line: &str) -> Vec<i32> {
@@ -67,6 +68,6 @@ mod tests {
                     zoneight234
                     7pqrstsixteen";
         let output = solve_part_two(input);
-        assert_eq!(output, 281);
+        assert_eq!(output, "281");
     }
 }
