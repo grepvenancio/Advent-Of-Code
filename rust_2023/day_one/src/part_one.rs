@@ -20,7 +20,6 @@ fn solve_part_one(input: &str) -> String {
         })
         .sum::<i32>()
         .to_string()
-        println!("teste");
 }
 
 #[cfg(test)]
